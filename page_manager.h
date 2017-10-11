@@ -1,10 +1,10 @@
 #ifndef __PM_H__
 #define __PM_H__
 #include"utils.h"
+#include"queue.h"
 #include<pthread.h>
 #include<limits.h>
 #include<stdint.h>
-#include<queue>
 typedef struct{
 	uint8_t bitset[PAGENUM/8];
 	int number;
@@ -14,7 +14,7 @@ typedef struct{
 
 typedef struct{
 	block *blocks;
-	std::queue<KEYT> *ppa;
+	queue *ppa;
 	pthread_mutex_t ppa_lock;
 	int reserve_block;
 	int reserve_block_point;

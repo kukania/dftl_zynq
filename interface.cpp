@@ -81,7 +81,7 @@ void inter_write(KEYT key, char *data, inter_req *req){
 	#ifndef NOINTER
 		fd=req->fd;
 	#else
-		fd=dftl.map->fd;
+		fd=dftl.fd;
 	#endif
  	if(lseek64(fd,((off64_t)PAGESIZE)*key,SEEK_SET)==-1){
 		printf("lseek error");
@@ -89,6 +89,14 @@ void inter_write(KEYT key, char *data, inter_req *req){
 	write(fd,data,PAGESIZE);
 	#ifndef NOINTER
 		req->end_req(req);
+	#else
+		if(req!=NULL && req->type==TP_W_TYPE){
+			free((tp*)data);
+		}
+		else{
+			free(data);
+		}
+		free(req);
 	#endif
 #endif
 }
@@ -101,7 +109,7 @@ void inter_read(KEYT key, char *data, inter_req *req){
 	#ifndef NOINTER
 		fd=req->fd;
 	#else
-		fd=dftl.map->fd;
+		fd=dftl.fd;
 	#endif
  	if(lseek64(fd,((off64_t)PAGESIZE)*key,SEEK_SET)==-1){
 		printf("lseek error");
@@ -109,6 +117,8 @@ void inter_read(KEYT key, char *data, inter_req *req){
 	read(fd,data,PAGESIZE);
 	#ifndef NOINTER
 		req->end_req(req);
+	#else
+		free(req);
 	#endif
 #endif
 }

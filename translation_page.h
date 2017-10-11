@@ -14,10 +14,10 @@ typedef struct{
 typedef translation_page tp;
 
 typedef struct{
-	keyset tp_lotation[DIRNUM];
+	KEYT tp_location[DIRNUM];
 }directory;
 keyset *tp_find_key(translation_page*,KEYT);
-keyset *tp_find_map(directory *dir, KEYT);
+KEYT tp_find_map(directory *dir, KEYT);
 keyset tp_write(translation_page* ,inter_req *);
 tp* tp_read(KEYT ppa, int fd);
 void tp_update(directory *,int dirnum, tp*,int fd);

@@ -3,11 +3,12 @@
 #include<sys/time.h>
 #include<unistd.h>
 #include<stdint.h>
+#include"measure.h"
 #define KEYT uint32_t
-#define KEYN (1024)
+#define KEYN 1024
 #define PAGESIZE (8192)
-#define INPUTSIZE (128*1024)
-#define CACHEMEM (10*(1024*1024))//M
+#define INPUTSIZE (2*128*1024)
+#define CACHEMEM (30*(1024*1024))//M
 #define DIRNUM (INPUTSIZE/KEYN)
 #define QSIZE 1024
 
@@ -19,6 +20,20 @@
 #define MAXPAGE (32*20*4096) //1G=32*4096
 #define DTPBLOCK (4)
 
+#ifndef NPRINTOPTION
+#define MT(t) measure_stamp((t))
+#define MS(t) measure_start((t))
+#define ME(t,s) measure_end((t),(s))
+#define MP(t) measure_pop((t))
+#define MC(t) measure_calc((t))
+#define MR(t) measure_res((t))
+#define MA(t) measure_adding((t))
+#else
+#define MS(t) donothing(t)
+#define ME(t,s) donothing2((t),(s))
+#define MP(t) donothing((t))
+#define MC(t) donothing((t))
+#endif
 
 #ifndef BOOL
 #define BOOL

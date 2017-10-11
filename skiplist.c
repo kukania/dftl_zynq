@@ -39,7 +39,7 @@ static int getLevel(){
 	}
 	return level;
 }
-snode *skiplist_insert(skiplist *list,KEYT key, entry *value){
+snode *skiplist_insert(skiplist *list,KEYT key, void *value,bool isdata){
 	snode *update[MAX_L+1];
 	snode *x=list->header;
 	for(int i=list->level; i>=1; i--){
@@ -51,8 +51,12 @@ snode *skiplist_insert(skiplist *list,KEYT key, entry *value){
 
 	if(key==x->key){
 		if(value!=NULL){
-			printf("double entries in body!\n");
-			x->data=value;
+			if(isdata){
+				printf("double entries in body!\n");
+				x->d.e_data=(entry*)value;
+			}
+			else
+				x->d.w_data=(w_entry*)value;
 		}
 		return x;
 	}
@@ -68,9 +72,11 @@ snode *skiplist_insert(skiplist *list,KEYT key, entry *value){
 		x=(snode*)malloc(sizeof(snode));
 		x->list=(snode**)malloc(sizeof(snode*)*(level+1));
 		x->key=key;
-		if(value !=NULL){
-			x->data=value;
-		}
+		if(isdata)
+			x->d.e_data=(entry*)value;
+		else
+			x->d.w_data=(w_entry*)value;
+
 		for(int i=1; i<=level; i++){
 			x->list[i]=update[i]->list[i];
 			update[i]->list[i]=x;
@@ -100,8 +106,10 @@ int skiplist_delete(skiplist* list, KEYT key){
 		if(update[i]==update[i]->list[i])
 			list->level--;
 	}
-
-	free(x->data);
+	if(x->d.e_data){
+		free(x->d.e_data->mapping);
+		free(x->d.e_data);
+	}
 	free(x->list);
 	free(x);
 	list->size--;
@@ -137,11 +145,20 @@ void skiplist_dump(skiplist * list){
 	free(iter);
 }
 
-void skiplist_clear(skiplist *list){
+void skiplist_clear(skiplist *list,bool isdata){
 	snode *now=list->header->list[1];
 	snode *next=now->list[1];
 	while(now!=list->header){
-		free(now->data);
+		if(isdata){
+			free(now->d.e_data->mapping);
+			free(now->d.e_data);
+		}
+		else{
+			//more!
+			if(now->d.w_data->data)
+				free(now->d.w_data->data);
+			free(now->d.w_data);
+		}
 		free(now->list);
 		free(now);
 		now=next;
@@ -153,8 +170,8 @@ void skiplist_clear(skiplist *list){
 	list->header->key=INT_MAX;
 	
 }
-void skiplist_free(skiplist *list){
-	skiplist_clear(list);
+void skiplist_free(skiplist *list,bool isdata){
+	skiplist_clear(list,isdata);
 	free(list->header->list);
 	free(list->header);
 	free(list);

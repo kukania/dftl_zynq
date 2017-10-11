@@ -1,11 +1,21 @@
 #ifndef __dftl_h__
 #define __dftl_h__
 #include"cache.h"
+#include"skiplist.h"
 #include"translation_page.h"
 #include"page_manager.h"
+typedef struct cache cache;
+typedef struct skiplist skiplist;
+typedef struct w_entry{
+	char *data;
+	inter_req *req;
+}w_entry;
+
 typedef struct dftl{
+	int fd;
 	cache *map;
 	directory tp_dir;
+	skiplist* w_buffer;
 	PM *pm;
 }dftl_t;
 

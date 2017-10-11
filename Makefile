@@ -16,9 +16,11 @@ SRCS 	:=\
 	cache.c\
 	LRU.c\
 	interface.cpp\
-	page_manager.cpp\
+	page_manager.c\
 	dftl.c\
 	skiplist.c\
+	measure.c\
+	queue.c\
 
 
 OBJS	:=\

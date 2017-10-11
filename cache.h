@@ -5,8 +5,10 @@
 #include"skiplist.h"
 #include"LRU.h"
 typedef struct entry{
-	keyset sets;
+	tp *mapping;
+	bool e_dirty[KEYN];
 	bool dirty;
+	int cnt;
 }entry;
 
 typedef struct cache{
@@ -15,12 +17,13 @@ typedef struct cache{
 	int cnt;
 	struct skiplist *body;
 	struct LRU *lru;
-	int fd;
 }cache;
 
-void cache_init(cache *,int);
+void cache_init(cache *);
 void cache_free(cache *);
-void cache_insert(cache*, entry *);
+entry* cache_insert(cache*, keyset,bool);
 void cache_evict(cache *);
-entry* cache_find(cache *,KEYT);
+tp* cache_load(cache *,KEYT );
+struct snode* cache_LRU(cache *);
+keyset* cache_find(cache *,KEYT);
 #endif

@@ -38,9 +38,7 @@ void LRU_insert(LRU *lru, entry *ent){
 		lru->n_size++;
 		return; 
 	}
-	
 	LRU_delete(lru,ent);
-
 	lru->top->up=new_node;
 	new_node->down=lru->top;
 
@@ -49,37 +47,7 @@ void LRU_insert(LRU *lru, entry *ent){
 }
 
 void LRU_delete(LRU *lru, entry *ent){
-	lru_node *iter=lru->top;
-	lru_node *up_node;
-	lru_node *down_node;
-	while(iter!=NULL){
-		if(iter->target->sets.lpn==ent->sets.lpn){
-			if(iter==lru->top){
-				lru->top=iter->down;
-				lru->top->up=NULL;
-	//			free(iter->target);
-				free(iter);
-			}
-			else if(iter==lru->bottom){
-				lru->bottom=iter->up;
-				lru->bottom=NULL;
-	//			free(iter->target);
-				free(iter);
-			}
-			else{
-				up_node=iter->up;
-				down_node=iter->down;
 	
-				up_node->down=down_node;
-				down_node->up=up_node;
-	//			free(iter->target);
-				free(iter);
-			}
-			lru->n_size--;
-			return;
-		}
-		iter=iter->down;
-	}
 }
 
 void LRU_free(LRU *lru){
