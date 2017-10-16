@@ -107,7 +107,8 @@ int skiplist_delete(skiplist* list, KEYT key){
 			list->level--;
 	}
 	if(x->d.e_data){
-		free(x->d.e_data->mapping);
+		if(x->d.e_data->mapping!=NULL)
+			free(x->d.e_data->mapping);
 		free(x->d.e_data);
 	}
 	free(x->list);
@@ -155,8 +156,10 @@ void skiplist_clear(skiplist *list,bool isdata){
 		}
 		else{
 			//more!
-			if(now->d.w_data->data)
-				free(now->d.w_data->data);
+			if(now->d.w_data->req){
+				free(now->d.w_data->req->data);
+				free(now->d.w_data->req);
+			}
 			free(now->d.w_data);
 		}
 		free(now->list);

@@ -4,12 +4,13 @@ CFLAGS	+=\
 		  -g\
 		  -std=c++11\
 		  -DCPP\
-		  -DNOINTER\
+#		  -DNOINTER\
 
 INCLUDES := -I$(PWD)\
 
 LIBS 	:=\
 	-lpthread\
+#	-lefence\
 
 SRCS 	:=\
 	translation_page.c\

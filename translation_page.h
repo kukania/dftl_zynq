@@ -19,7 +19,7 @@ typedef struct{
 keyset *tp_find_key(translation_page*,KEYT);
 KEYT tp_find_map(directory *dir, KEYT);
 keyset tp_write(translation_page* ,inter_req *);
-tp* tp_read(KEYT ppa, int fd);
+tp* tp_read(KEYT ppa, int fd, inter_req *);
 void tp_update(directory *,int dirnum, tp*,int fd);
 int convert_ptod(KEYT ppa);
 #endif

@@ -48,6 +48,7 @@ inline bool FLAGGET(uint64_t &des){
 }
 /*for user*/
 void PM_init(PM*);
+void deletePPA(PM *,KEYT);
 KEYT getDataPPA(PM*);
 KEYT getTrPPA(PM*);
 void PM_free(PM*);

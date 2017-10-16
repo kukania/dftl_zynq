@@ -21,6 +21,7 @@ typedef struct dftl{
 
 void dftl_init(dftl_t*);
 void dftl_write(dftl_t *,KEYT key, char *data, inter_req *req);
+void dftl_writeTbuffer(dftl_t*,inter_req*);
 void dftl_read(dftl_t *,KEYT key, char *data, inter_req *req);
 void dftl_trim(dftl_t*,KEYT key, char *data, inter_req *req);
 void dftl_free(dftl_t *);

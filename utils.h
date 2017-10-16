@@ -7,9 +7,10 @@
 #define KEYT uint32_t
 #define KEYN 1024
 #define PAGESIZE (8192)
-#define INPUTSIZE (2*128*1024)
-#define CACHEMEM (30*(1024*1024))//M
-#define DIRNUM (INPUTSIZE/KEYN)
+#define INPUTSIZE (1*128*1024)
+#define CACHEMEM (1*(1024*1024))//M
+#define KEYRANGE (1*(128*1024*1024))//()=1T
+#define DIRNUM (KEYRANGE/KEYN)
 #define QSIZE 1024
 
 #define SEQUENCE 1

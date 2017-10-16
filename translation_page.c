@@ -4,6 +4,7 @@
 #include"interface.h"
 #include<stdlib.h>
 #include<stdio.h>
+#include<pthread.h>
 extern dftl_t dftl;
 keyset* tp_find_key(translation_page *input, KEYT key){
 	return &input->sets[(key-1)%KEYN];
@@ -23,36 +24,42 @@ KEYT tp_write(tp* input, int fd){
 	tp_req->data=(char*)input;
 	tp_req->fd=fd;
 	tp_req->end_req=end_req;
+	KEYT res=tp_req->ppa;
 	inter_write(tp_req->ppa,tp_req->data,tp_req);
-	return tp_req->ppa;
+	return res;
 }
 
-tp* tp_read(KEYT ppa,int fd){
+tp* tp_read(KEYT ppa,int fd, inter_req *parent){
 	tp * res=(tp*)malloc(sizeof(translation_page));
 	inter_req *tp_req=(inter_req*)malloc(sizeof(inter_req));
 	tp_req->type=TP_R_TYPE;
 	tp_req->ppa=ppa;
 	tp_req->end_req=end_req;
+	tp_req->parent=parent;
 	pthread_mutex_init(&tp_req->lock,NULL);
-#ifdef ENABLE_LIBFTL
+#ifndef ENABLE_LIBFTL
+	tp_req->data=(char*)res;
+#else
+
+#endif
+#ifndef NOINTER
 	#ifdef ASYNC
 		
 	#else
 		pthread_mutex_lock(&tp_req->lock);
 	#endif
 #else
-	tp_req->data=(char*)res;
+	
 #endif
 	inter_read(tp_req->ppa,tp_req->data,tp_req);
-	pthread_mutex_lock(&tp_req->lock);
-	return (tp*)res;
+	return NULL;
 }
 
 void tp_update(directory *dir, int dirnum, tp* target,int fd){
 	tp *read_s;
 	//printf("cache_update: %d\n",target->sets[0].lpn);
 	if(dir->tp_location[dirnum]!=UINT_MAX){//new table write
-		//report invalid ppa in header
+		//report invalid ppa for header
 	}
 	read_s=target;
 	/*

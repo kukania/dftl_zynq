@@ -12,6 +12,8 @@ void segment_block_init(segment*,int);
 void segment_block_change(segment *, int);
 void segment_free(segment *);
 /*for user*/
+
+int test_ppa;
 void PM_init(PM* pm){
 	DELETEDKEY=MAXPAGE+DTPBLOCK*PAGENUM;
 	pm->data_sets=(segment*)malloc(sizeof(segment));
@@ -19,12 +21,15 @@ void PM_init(PM* pm){
 	pm->tp_sets=(segment*)malloc(sizeof(segment));
 	segment_init(pm->tp_sets,SEGNUM-1,1);
 	pm->oob=(uint64_t*)malloc(sizeof(uint64_t)*MAXPAGE);
+	test_ppa=0;
 }
 KEYT getDataPPA(PM *pm){
+	return test_ppa++;
 	KEYT test=getPPA(pm->data_sets,true);
 	return test;
 }
 KEYT getTrPPA(PM *pm){
+	return test_ppa++;
 	KEYT test=getPPA(pm->tp_sets,false);
 	return test;
 }
@@ -33,6 +38,38 @@ void PM_free(PM *pm){
 	segment_free(pm->tp_sets);
 	free(pm->oob);
 	free(pm);
+}
+void deletePPA(PM* pm, KEYT input){
+	int block_num=input/PAGENUM;
+	int offset_meta=input%PAGENUM;
+
+	int bit_num=offset_meta/8;
+	int offset=offset_meta%8;
+
+	segment *set;
+	if(pm->data_sets->start_block_n+pm->data_sets->size>block_num){
+		set=pm->data_sets;
+	}
+	else{
+		set=pm->tp_sets;
+	}
+	
+	uint8_t target=1;
+	uint8_t test=1;
+	target=target<<offset;
+	test=target;
+	target=~target;
+
+	for(int i=0; i<set->size; i++){
+		if(set->blocks[i].number!=block_num) continue;
+		if(!(test&set->blocks[i].bitset[bit_num])) continue;
+		set->blocks[i].bitset[bit_num] &=target;
+		set->blocks[i].invalid_n++;
+		if(set->blocks[block_num].invalid_n>PAGENUM){
+			printf("over block!]: %d\n",set->blocks[block_num].number);
+			exit(1);
+		}
+	}
 }
 /*for user end*/
 
@@ -69,7 +106,7 @@ KEYT getPPA(segment *input, bool isdata){
 		}
 	}
 	if(!flag){
-		printf("full storage!\n");
+		printf("%s:full storage!\n",(isdata?"from data":"from header"));
 		return 0;
 	}
 	pthread_mutex_unlock(&input->ppa_lock);
